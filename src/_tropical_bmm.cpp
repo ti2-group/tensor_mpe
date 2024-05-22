@@ -1,4 +1,4 @@
-#include "_tropical_bmm.h"
+#include "_tropical_bmm.hpp"
 #include <cstdlib>
 #include <omp.h>
 #include <limits>

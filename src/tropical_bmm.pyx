@@ -10,7 +10,7 @@ import numpy as np
 import torch
 from torch import Tensor
 
-cdef extern from "_tropical_bmm.h":
+cdef extern from "_tropical_bmm.hpp":
     struct forward_result:
         const float* matrix_batch
         const int* max_k
