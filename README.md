@@ -22,7 +22,7 @@ Then, for each model, every query is run 10 times and the runtimes are plotted i
 - `src/graphical_model.py`: Graphical model class with functions for MPE and log probability.
 - `src/my_bitsets.py`: Simple bitset implementation. This is useful because we want ordered, hashable sets of variables.
 - `src/contractions.py`: Simple implementation of an tensor contraction along a contraction path.
-- `src/_tropical_bmm.h`, `src/_tropical_bmm.cpp`: C++ implementation of a batch-matrix-multiplication in the tropical semiring with forward and backward mode for autograd.
+- `src/_tropical_bmm.hpp`, `src/_tropical_bmm.cpp`: C++ implementation of a batch-matrix-multiplication in the tropical semiring with forward and backward mode for autograd.
 - `src/topical_bmm.pyx`: Cython wrapper for the C++ implementation and interface for pairwise einsum which is used for small contractions along the contraction path.
 - `src/random_benchmarks.py`: Generates random models and random queries for each model. It is automatically seeded, but you can disable that with the flag `auto_seed = False`.
 - `src/runtime.py` Uses `src/random_benchmarks.py` to generate random models and benchmarks the MPE implementation on it.
