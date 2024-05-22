@@ -1,0 +1,13 @@
+# IDE
+.vscode
+
+# python environment
+.autoenv
+.autoenv.leave
+__pycache__
+
+# cython stuff
+build
+cython/*.c
+*.so
+src/tropical_bmm.cpp
