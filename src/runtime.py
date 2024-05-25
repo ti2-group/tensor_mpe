@@ -1,12 +1,12 @@
 import time
+from collections import defaultdict
+
+import matplotlib.pyplot as plt
 import numpy as np
 from tqdm import tqdm
-import matplotlib.pyplot as plt
-from collections import defaultdict
 
 from graphical_model import GraphicalModel
 from random_benchmarks import Query, gen_benchmarks
-
 
 RUN_N_TIMES = 10
 

@@ -1,12 +1,31 @@
-import torch
-from torch import Tensor
 from collections import Counter
 from typing import Callable
+
 import opt_einsum as oe
-from tropical_bmm import tropical_pairwise_einsum
+import torch
+from torch import Tensor
+
+from tropical_pairwise_einsum import tropical_pairwise_einsum
 
 
 def slice_tensor(tensor: Tensor, axes: list[int], slice_multi_index: tuple[int, ...]) -> Tensor:
+    """Slices a tensor along the given axes with the given multi-index.
+
+    Parameters
+    ----------
+    tensor : Tensor
+        Tensor to be sliced.
+    axes : list[int]
+        Axes along which the tensor should be sliced.
+    slice_multi_index : tuple[int, ...]
+        Multi-index the given axes are fixed to.
+
+    Returns
+    -------
+    Tensor
+        Lower-order tensor obtained by slicing the given tensor.
+    """
+
     assert len(axes) == len(slice_multi_index)
     slicing_expression = [slice(None)] * len(tensor.shape)
     for axis, value in zip(axes, slice_multi_index):
@@ -14,19 +33,23 @@ def slice_tensor(tensor: Tensor, axes: list[int], slice_multi_index: tuple[int, 
     return tensor[tuple(slicing_expression)]
 
 
-def standard_pairwise_einsum(input_string_1: str, input_string_2: str, output_string: str, tensor_1: Tensor, tensor_2: Tensor) -> Tensor:
+def _standard_pairwise_einsum(input_string_1: str, input_string_2: str, output_string: str, tensor_1: Tensor, tensor_2: Tensor) -> Tensor:
     return torch.einsum(f"{input_string_1},{input_string_2}->{output_string}", tensor_1, tensor_2)
 
 
-def contract_along_path(format_string: str, *args: Tensor, pairwise_einsum: Callable[[str, str, str, Tensor, Tensor], Tensor] = standard_pairwise_einsum, path=None) -> Tensor:
+def my_einsum(format_string: str, *args: Tensor, pairwise_einsum: Callable[[str, str, str, Tensor, Tensor], Tensor] = _standard_pairwise_einsum, path: list[tuple[int, int]] = None) -> Tensor:
     """Computes einsum with a contraction path given by opt_einsum, but a custom pairwise einsum can be given, in order to support different semirings.
 
     Parameters
     ----------
     format_string : str
         Einsum format string.
+    *args : Tensor
+        Tensors to be contracted.
     pairwise_einsum : Callable[[str, str, str, str, Tensor, Tensor], Tensor], optional
         An efficient implementation of einsum over 2 input tensors.
+    path : list[tuple[int, int]], optional
+        The contraction path to be used. If None, it will be computed by opt_einsum.
 
     Returns
     -------
@@ -69,7 +92,7 @@ def contract_along_path(format_string: str, *args: Tensor, pairwise_einsum: Call
 
 
 def max_plus_einsum(format_string: str, *args: Tensor, path=None) -> Tensor:
-    return contract_along_path(format_string, *args, pairwise_einsum=tropical_pairwise_einsum, path=path)
+    return my_einsum(format_string, *args, pairwise_einsum=tropical_pairwise_einsum, path=path)
 
 
 def main():
@@ -80,9 +103,9 @@ def main():
     axis_1 = torch.zeros(2, requires_grad=True)
     axis_2 = torch.zeros(3, requires_grad=True)
     axis_3 = torch.zeros(4, requires_grad=True)
-    max_element = contract_along_path("ik,kj,i,k,j->", x, y, axis_1, axis_2, axis_3, pairwise_einsum=tropical_pairwise_einsum)
+    max_element = my_einsum("ik,kj,i,k,j->", x, y, axis_1, axis_2, axis_3, pairwise_einsum=tropical_pairwise_einsum)
     max_element.backward()
-    combination = contract_along_path("ik,kj->ikj", x, y, pairwise_einsum=tropical_pairwise_einsum)
+    combination = my_einsum("ik,kj->ikj", x, y, pairwise_einsum=tropical_pairwise_einsum)
     print((combination == max_element).nonzero())
     print(combination)
     print(axis_1.grad)
