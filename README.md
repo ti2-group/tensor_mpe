@@ -9,7 +9,7 @@
 ## What it does
 
 This repository is a proof-of-concept implentation of MPE in tensor networks. It uses derivatives of a tensor contraction over the tropical (max-plus) semiring, that maximizes the probability in a discrete graphical model.
-The main file to execute is `src/runtime.py`. When you execute this program, it first generates hidden markov models.
+The main file to execute is `src/runtime.py`. When you execute this program, it first generates random graphical models.
 It generates a bunch of random queries for each model that you can customize in `src/random_benchmarks.py`.
 Then, for each model, every query is run 10 times and the runtimes are plotted in `graphics/runtimes.png`.
 
@@ -19,7 +19,7 @@ Then, for each model, every query is run 10 times and the runtimes are plotted i
 
 The generated models are tensor trains. Given the tensor train has length $n$, then the model has $2n - 1$ variables, where the first $n - 1$ variables are hidden, and the last $n$ variables are observed.
 
-![Hidden Markov Model](graphics/hidden_markov_model.png)
+![Tensor Train with 4 factors](graphics/tensor_train.png)
 
 #### Parameters for model generation
 

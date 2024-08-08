@@ -11,3 +11,13 @@ build
 cython/*.c
 *.so
 src/bmm_interface.cpp
+
+# tex stuff
+graphics/*.aux
+graphics/*.log
+graphics/*.pdf
+graphics/*.synctex.gz
+graphics/*.fls
+graphics/*.fdb_latexmk
+graphics/*.aux
+graphics/*.log
